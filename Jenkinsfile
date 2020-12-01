@@ -6,18 +6,15 @@ pipeline {
 }"stages"{
 	"stage (""Checkout"")"{
 		"steps"{
-			"git branch":"master",
-			"url":"https://github.com/ScaleSec/vulnado.git"
+			"git branch":"master","url":"https://github.com/ScaleSec/vulnado.git"
 		}
 	}"stage (""Build"")"{
 		"steps"{
-			"sh""mvn --batch-mode -V -U -e clean verify -Dsurefire.useFile=false -
-Dmaven.test.failure.ignore"
+			"sh""mvn --batch-mode -V -U -e clean verify -Dsurefire.useFile=false -Dmaven.test.failure.ignore"
 		}
 	}"stage (""Analysis"")"{
 		"steps"{
-			"sh""mvn --batch-mode -V -U -e checkstyle:checkstyle pmd:pmd pmd:cpd
-findbugs:findbugs"
+			"sh""mvn --batch-mode -V -U -e checkstyle:checkstyle pmd:pmd pmd:cpd findbugs:findbugs"
 		}
 	}
 		            stage('OWASP DependencyCheck') {
