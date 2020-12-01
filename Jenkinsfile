@@ -1,50 +1,48 @@
 pipeline {
 	agent {
-docker { image 'maven' }
-}
-stages {
-stage ('Checkout') {
-steps {
-git branch:'master', url: 'https://github.com/ScaleSec/vulnado.git'
-}
-}
-stage ('Build') {
-steps {
-sh 'mvn --batch-mode -V -U -e clean verify -Dsurefire.useFile=false -D maven.test.failure.ignore'
-}
-}
-stage ('Analysis') {
-steps {
-sh 'mvn --batch-mode -V -U -e checkstyle:checkstyle pmd:pmd pmd:cpd findbugs:findbugs'
-}
-}
-	            stage('OWASP DependencyCheck') {
-                steps {
-                    dependencyCheck additionalArguments: '--format HTML --format XML', odcInstallation: 'Default'
-                }
+        docker { image 'maven' }
+    }
+    stages {
+        stage ('Checkout') {
+            steps {
+                git branch:'master', url: 'https://github.com/ScaleSec/vulnado.git'
             }
-
-}
-post {
-always {
-junit testResults: '**/target/surefire-reports/TEST-*.xml'
-recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
-recordIssues enabledForFailure: true, tool: checkStyle()
-recordIssues enabledForFailure: true, tool: spotBugs(pattern:
-'**/target/findbugsXml.xml')
-recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
-recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
-}
-	        success {
+        }
+        stage ('Build') {
+            steps {
+                sh 'mvn --batch-mode -V -U -e clean verify -Dsurefire.useFile=false -D maven.test.failure.ignore'
+            }
+        }
+        stage ('Analysis') {
+            steps {
+                sh 'mvn --batch-mode -V -U -e checkstyle:checkstyle pmd:pmd pmd:cpd findbugs:findbugs'
+            }
+        }
+        stage('OWASP DependencyCheck') {
+            steps {
+                dependencyCheck additionalArguments: '--format HTML --format XML', odcInstallation: 'Default'
+            }
+        }
+    }
+    post {
+        always {
+            junit testResults: '**/target/surefire-reports/TEST-*.xml'
+            recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
+            recordIssues enabledForFailure: true, tool: checkStyle()
+            recordIssues enabledForFailure: true, tool: spotBugs(pattern:
+            '**/target/findbugsXml.xml')
+            recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
+            recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
+        }
+        success {
             dependencyCheckPublisher pattern: 'dependency-check-report.xml'
         }
-
 }
-	
-	/*
+/*
+pipeline {
 	agent any
 	stages {
-	*/
+*/
     	/** UNCOMMENT THIS WHEN NEEDED  [SonarScanner]**/
 		/*
 	    stage('Headless browser test') {
@@ -88,21 +86,24 @@ recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xm
 	
         /** UNCOMMENT THIS WHEN NEEDED  [OWASP]**/
         /*
-            stage('OWASP DependencyCheck') {
-                steps {
-                    dependencyCheck additionalArguments: '--format HTML --format XML', odcInstallation: 'Default'
-                }
+        stage('OWASP DependencyCheck') {
+            steps {
+                dependencyCheck additionalArguments: '--format HTML --format XML', odcInstallation: 'Default'
             }
-       
-    }
+        }
         */
+/*  
+    }
+*/
     /** UNCOMMENT THIS WHEN NEEDED  [OWASP]**/
-/*
-        post {
+    /*
+    post {
         success {
             dependencyCheckPublisher pattern: 'dependency-check-report.xml'
         }
 	
-  }
+    }
 	*/
+/*
 }
+*/
