@@ -3,12 +3,13 @@ agent {
 docker { image 'maven' }
 }
 stages {
-stage ('Checkout') {
-steps {
-git branch:'master', url: 'https://github.com/OWASP/Vulnerable-Web-Application.git'
-}
-}
-stage('Code Quality Check via SonarQube') {
+        stage('OWASP DependencyCheck') {
+            steps {
+                dependencyCheck additionalArguments: '--format HTML --format XML', odcInstallation: 'Default'
+            }
+        }
+
+  stage('Code Quality Check via SonarQube') {
 steps {
 script {
 def scannerHome = tool 'SonarQube';
@@ -27,5 +28,9 @@ post {
 always {
 recordIssues enabledForFailure: true, tool: sonarQube()
 }
+          success {
+            dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+        }
+
 }
 }
