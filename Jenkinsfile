@@ -52,12 +52,10 @@ pipeline {
        
     }
     /** UNCOMMENT THIS WHEN NEEDED  [OWASP]**/
-    /*
         post {
         success {
             dependencyCheckPublisher pattern: 'dependency-check-report.xml'
         }
     }
-    */
 	
 }
