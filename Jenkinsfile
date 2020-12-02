@@ -17,7 +17,7 @@ withSonarQubeEnv() {
 sh "${tool("SonarQube")}/bin/sonar-scanner \
 -Dsonar.projectKey=OWSAP \
 -Dsonar.sources=. \
--Dsonar.host.url=http://syblopomg.mooo.com/:9000 \
+-Dsonar.host.url=http://syblopomg.mooo.com:9000/ \
 -Dsonar.login=7d265d1f1fe61c957670c6e0603cf4136e7c6aef"
 }
 }
